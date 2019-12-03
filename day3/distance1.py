@@ -1,48 +1,30 @@
 from collections import defaultdict
 
-def points(path):
+def points(grid, path, wire):
   segments = list((x[0], int(x[1::])) for x in path.split(','))
-  grid = defaultdict(bool)
   x = 0
   y = 0
-  grid[(x,y)] = True
   for (direction, distance) in segments:
-    if direction == 'U':
-      for yPrime in range(y+1, y+1+distance):
-        grid[(x, yPrime)] = True
-      y += distance
-    elif direction =='D':
-      for yPrime in range(y-1-distance, y-1):
-        grid[(x, yPrime)] = True
-      y -= distance
-    elif direction == 'L':
-      for xPrime in range(x-1-distance, x-1):
-        grid[(xPrime, y)] = True
-      x -= distance
-    elif direction =='R':
-      for xPrime in range(x+1, x+1+distance):
-        grid[(xPrime, y)] = True
-      x += distance
-  return grid
+    for d in range (1, distance+1):
+      if direction == 'U':
+        y += 1
+      elif direction =='D':
+        y -= 1
+      elif direction == 'L':
+        x -= 1
+      elif direction =='R':
+        x += 1
+      grid[(x, y)][wire] = True
 
-def closestIntersection(points1, points2):
-  xMin = max(min(x for (x,y) in points1), min(x for (x,y) in points2))
-  xMax = min(max(x for (x,y) in points1), max(x for (x,y) in points2))
-  yMin = max(min(y for (x,y) in points1), min(y for (x,y) in points2))
-  yMax = min(max(y for (x,y) in points1), max(y for (x,y) in points2))
-
-  for distance in range(1, (xMax-xMin) + (yMax-yMin) + 1):
-    for x in range(-distance, distance+1):
-      y = distance - abs(x)
-      if (points1[(x,y)] and points2[(x,y)]) or (points1[(x,-y)] and points2[(x,-y)]):
-        return distance
+def closestIntersection(grid):
+  return min(abs(coordinates[0]) + abs(coordinates[1]) for (coordinates, distances) in grid.items() if distances[0] and distances[1])
 
 def calcDistance(path1, path2):
-  points1 = points(path1)
-  points2 = points(path2)
+  grid = defaultdict(lambda: [False, False])
+  points1 = points(grid, path1, 0)
+  points2 = points(grid, path2, 1)
 
-  return closestIntersection(points1, points2)
-
+  return closestIntersection(grid)
 
 assert calcDistance('R8,U5,L5,D3', 'U7,R6,D4,L4') == 6
 
