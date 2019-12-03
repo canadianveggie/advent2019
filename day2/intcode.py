@@ -1,31 +1,40 @@
+def run (noun, verb):
+  memory = list()
 
+  with open('./data/input.txt') as in_memory:
+    for line in in_memory:
+      memory.extend(list(int(x) for x in line.split(',')))
 
-codes = list()
+  memory[1] = noun
+  memory[2] = verb
 
-with open('./data/input.txt') as inputcodes:
-  for line in inputcodes:
-    codes.extend(list(int(x) for x in line.split(',')))
+  position = 0
+  while True:
+    if position >= len(memory):
+      raise Exception('Ran out of instructions at position {}'.format(position))
 
-position = 0
-while True:
-  if position >= len(codes):
-    raise Error('Ran out of instructions at position {}'.format(position))
+    if memory[position] == 99:
+      break
+    elif memory[position] == 1:
+      if (position + 3) >= len(memory):
+        raise Exception('Misisng arguments at position {}'.format(position))
+      memory[memory[position + 3]] = memory[memory[position + 1]] + memory[memory[position + 2]]
+    elif memory[position] == 2:
+      if (position + 3) >= len(memory):
+        raise Exception('Misisng arguments at position {}'.format(position))
+      memory[memory[position + 3]] = memory[memory[position + 1]] * memory[memory[position + 2]]
+    else:
+      raise Exception('Unknown opCode {} at position {}'.format(memory[position], position))
+    position = position + 4
 
-  if codes[position] == 99:
-    break
+  return memory[0]
 
-  if codes[position] == 1:
-    if (position + 3) >= len(codes):
-      raise Error('Misisng arguments at position {}'.format(position))
-    codes[codes[position + 3]] = codes[codes[position + 1]] + codes[codes[position + 2]]
+print(run(12, 2))
 
-  if codes[position] == 2:
-    if (position + 3) >= len(codes):
-      raise Error('Misisng arguments at position {}'.format(position))
-    codes[codes[position + 3]] = codes[codes[position + 1]] * codes[codes[position + 2]]
+target = 19690720
+for noun in range(100):
+  for verb in range(100):
+    result = run(noun, verb)
+    if result == target:
+      print(noun, verb, target)
 
-  position = position + 4
-
-
-with open('./data/output.txt', 'w') as outputcodes:
-  outputcodes.write(','.join(str(x) for x in codes))
