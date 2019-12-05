@@ -1,10 +1,10 @@
-def run (input_val):
-  memory = list()
+standary_memory = list()
+with open('./data/input.txt') as in_memory:
+  for line in in_memory:
+    standary_memory.extend(list(int(x) for x in line.split(',')))
 
-  with open('./data/input.txt') as in_memory:
-    for line in in_memory:
-      memory.extend(list(int(x) for x in line.split(',')))
 
+def run (memory, input_val):
   position = 0
   output_val = -1
   while True:
@@ -89,4 +89,48 @@ def run (input_val):
 
   return output_val
 
-print(run(5))
+# Using position mode, consider whether the input is equal to 8; output 1 (if it is) or 0 (if it is not).
+assert run([3,9,8,9,10,9,4,9,99,-1,8], 0) == 0
+assert run([3,9,8,9,10,9,4,9,99,-1,8], 7) == 0
+assert run([3,9,8,9,10,9,4,9,99,-1,8], 8) == 1
+assert run([3,9,8,9,10,9,4,9,99,-1,8], 9) == 0
+# Using position mode, consider whether the input is less than 8; output 1 (if it is) or 0 (if it is not).
+assert run([3,9,7,9,10,9,4,9,99,-1,8], 0) == 1
+assert run([3,9,7,9,10,9,4,9,99,-1,8], 7) == 1
+assert run([3,9,7,9,10,9,4,9,99,-1,8], 8) == 0
+assert run([3,9,7,9,10,9,4,9,99,-1,8], 9) == 0
+# Using immediate mode, consider whether the input is equal to 8; output 1 (if it is) or 0 (if it is not).
+assert run([3,3,1108,-1,8,3,4,3,99], 0) == 0
+assert run([3,3,1108,-1,8,3,4,3,99], 7) == 0
+assert run([3,3,1108,-1,8,3,4,3,99], 8) == 1
+assert run([3,3,1108,-1,8,3,4,3,99], 9) == 0
+# Using immediate mode, consider whether the input is less than 8; output 1 (if it is) or 0 (if it is not).
+assert run([3,3,1107,-1,8,3,4,3,99], 0) == 1
+assert run([3,3,1107,-1,8,3,4,3,99], 7) == 1
+assert run([3,3,1107,-1,8,3,4,3,99], 8) == 0
+assert run([3,3,1107,-1,8,3,4,3,99], 9) == 0
+# Using position mode, take an input, then output 0 if the input was zero or 1 if the input was non-zero:
+assert run([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9], -1) == 1
+assert run([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9], 0) == 0
+assert run([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9], 1) == 1
+# Using immediate mode, take an input, then output 0 if the input was zero or 1 if the input was non-zero:
+assert run([3,3,1105,-1,9,1101,0,0,12,4,12,99,1], -1) == 1
+assert run([3,3,1105,-1,9,1101,0,0,12,4,12,99,1], 0) == 0
+assert run([3,3,1105,-1,9,1101,0,0,12,4,12,99,1], 1) == 1
+# uses an input instruction to ask for a single number. The program will then output 999 if the input value is below 8, output 1000 if the input value is equal to 8, or output 1001 if the input value is greater than 8.
+assert run([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,
+  1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,
+  999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99], 1) == 999
+assert run([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,
+  1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,
+  999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99], 7) == 999
+assert run([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,
+  1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,
+  999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99], 8) == 1000
+assert run([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,
+  1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,
+  999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99], 9) == 1001
+
+print(run(standary_memory.copy(), 1))
+
+print(run(standary_memory.copy(), 5))
