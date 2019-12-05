@@ -17,34 +17,34 @@ def run (memory, input_val):
     modes.reverse()
     modes.extend([0] * (4 - len(modes)))
 
-    if command == 99:
+    if command == 99: # HALT
       break
-    elif command == 1:
+    elif command == 1: # ADD arg3 = arg2 + arg1
       if (position + 3) >= len(memory):
         raise Exception('Misisng arguments at position {}'.format(position))
       arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
       arg2 = memory[position + 2] if modes[1] else memory[memory[position + 2]]
       memory[memory[position + 3]] = arg1 + arg2
       position += 4
-    elif command == 2:
+    elif command == 2: # MULT arg3 = arg2 * arg1
       if (position + 3) >= len(memory):
         raise Exception('Misisng arguments at position {}'.format(position))
       arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
       arg2 = memory[position + 2] if modes[1] else memory[memory[position + 2]]
       memory[memory[position + 3]] = arg1 * arg2
       position += 4
-    elif command == 3:
+    elif command == 3: # INPUT arg1 = input_val
       if (position + 1) >= len(memory):
         raise Exception('Misisng arguments at position {}'.format(position))
       memory[memory[position + 1]] = input_val
       position += 2
-    elif command == 4:
+    elif command == 4: # OUTPUT output_val = arg1
       if (position + 1) >= len(memory):
         raise Exception('Misisng arguments at position {}'.format(position))
       arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
       output_val = arg1
       position += 2
-    elif command == 5:
+    elif command == 5: # JUMP_IF if arg1, position = arg2
       if (position + 2) >= len(memory):
         raise Exception('Misisng arguments at position {}'.format(position))
       arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
@@ -53,7 +53,7 @@ def run (memory, input_val):
         position = arg2
       else:
         position += 3
-    elif command == 6:
+    elif command == 6: # JUMP_NOT_IF if !arg1, position = arg2
       if (position + 2) >= len(memory):
         raise Exception('Misisng arguments at position {}'.format(position))
       arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
@@ -62,7 +62,7 @@ def run (memory, input_val):
         position = arg2
       else:
         position += 3
-    elif command == 7:
+    elif command == 7: # IF_LESS arg3 = arg1 < arg 2
       if (position + 3) >= len(memory):
         raise Exception('Misisng arguments at position {}'.format(position))
       arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
@@ -73,7 +73,7 @@ def run (memory, input_val):
       else:
         memory[memory[position + 3]] = 0
       position += 4
-    elif command == 8:
+    elif command == 8: # EQUALS arg3 = arg1 == arg 2
       if (position + 3) >= len(memory):
         raise Exception('Misisng arguments at position {}'.format(position))
       arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
