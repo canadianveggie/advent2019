@@ -44,9 +44,49 @@ def run (input_val):
       arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
       output_val = arg1
       position += 2
+    elif command == 5:
+      if (position + 2) >= len(memory):
+        raise Exception('Misisng arguments at position {}'.format(position))
+      arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
+      arg2 = memory[position + 2] if modes[1] else memory[memory[position + 2]]
+      if arg1:
+        position = arg2
+      else:
+        position += 3
+    elif command == 6:
+      if (position + 2) >= len(memory):
+        raise Exception('Misisng arguments at position {}'.format(position))
+      arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
+      arg2 = memory[position + 2] if modes[1] else memory[memory[position + 2]]
+      if not arg1:
+        position = arg2
+      else:
+        position += 3
+    elif command == 7:
+      if (position + 3) >= len(memory):
+        raise Exception('Misisng arguments at position {}'.format(position))
+      arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
+      arg2 = memory[position + 2] if modes[1] else memory[memory[position + 2]]
+
+      if arg1 < arg2:
+        memory[memory[position + 3]] = 1
+      else:
+        memory[memory[position + 3]] = 0
+      position += 4
+    elif command == 8:
+      if (position + 3) >= len(memory):
+        raise Exception('Misisng arguments at position {}'.format(position))
+      arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
+      arg2 = memory[position + 2] if modes[1] else memory[memory[position + 2]]
+
+      if arg1 == arg2:
+        memory[memory[position + 3]] = 1
+      else:
+        memory[memory[position + 3]] = 0
+      position += 4
     else:
       raise Exception('Unknown opCode {} at position {}'.format(memory[position], position))
 
   return output_val
 
-print(run(1))
+print(run(5))
