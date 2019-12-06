@@ -3,15 +3,14 @@ with open('./data/input.txt') as in_memory:
   for line in in_memory:
     standary_memory.extend(list(int(x) for x in line.split(',')))
 
-
-def run (memory, input_val):
-  position = 0
+def run (mem, input_val, verbose=False):
+  p = 0
   output_val = -1
   while True:
-    if position >= len(memory):
-      raise Exception('Ran out of instructions at position {}'.format(position))
+    if p >= len(mem):
+      raise Exception('Ran out of instructions at position {}'.format(p))
 
-    instruction = memory[position]
+    instruction = mem[p]
     command = instruction % 100
     modes = [int(i) for i in str(instruction // 100)]
     modes.reverse()
@@ -20,72 +19,80 @@ def run (memory, input_val):
     if command == 99: # HALT
       break
     elif command == 1: # ADD arg3 = arg2 + arg1
-      if (position + 3) >= len(memory):
-        raise Exception('Misisng arguments at position {}'.format(position))
-      arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
-      arg2 = memory[position + 2] if modes[1] else memory[memory[position + 2]]
-      memory[memory[position + 3]] = arg1 + arg2
-      position += 4
+      [a1, a2, a3] = mem[p+1: p+4]
+      arg1 = a1 if modes[0] else mem[a1]
+      arg2 = a2 if modes[1] else mem[a2]
+      if verbose:
+        print(f'{p:4}: \t {instruction:6} {a1:5} {a2:5} {a3:5} =>\tADD {a3} = {arg1} + {arg2}')
+      mem[a3] = arg1 + arg2
+      p += 4
     elif command == 2: # MULT arg3 = arg2 * arg1
-      if (position + 3) >= len(memory):
-        raise Exception('Misisng arguments at position {}'.format(position))
-      arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
-      arg2 = memory[position + 2] if modes[1] else memory[memory[position + 2]]
-      memory[memory[position + 3]] = arg1 * arg2
-      position += 4
+      [a1, a2, a3] = mem[p+1: p+4]
+      arg1 = a1 if modes[0] else mem[a1]
+      arg2 = a2 if modes[1] else mem[a2]
+      if verbose:
+        print(f'{p:4}: \t {instruction:6} {a1:5} {a2:5} {a3:5} =>\tMULT {a3} = {arg1} * {arg2}')
+      mem[a3] = arg1 * arg2
+      p += 4
     elif command == 3: # INPUT arg1 = input_val
-      if (position + 1) >= len(memory):
-        raise Exception('Misisng arguments at position {}'.format(position))
-      memory[memory[position + 1]] = input_val
-      position += 2
+      [a1] = mem[p+1: p+2]
+      if verbose:
+        print(f'{p:4}: \t {instruction:6} {a1:5}             =>\tINPUT {a1} = {input_val}')
+      mem[a1] = input_val
+      p += 2
     elif command == 4: # OUTPUT output_val = arg1
-      if (position + 1) >= len(memory):
-        raise Exception('Misisng arguments at position {}'.format(position))
-      arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
+      [a1] = mem[p+1: p+2]
+      arg1 = a1 if modes[0] else mem[a1]
+      if verbose:
+        print(f'{p:4}: \t {instruction:6} {a1:5}           =>\tOUTPUT {arg1}')
       output_val = arg1
-      position += 2
-    elif command == 5: # JUMP_IF if arg1, position = arg2
-      if (position + 2) >= len(memory):
-        raise Exception('Misisng arguments at position {}'.format(position))
-      arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
-      arg2 = memory[position + 2] if modes[1] else memory[memory[position + 2]]
+      p += 2
+    elif command == 5: # JUMP_IF if arg1, p = arg2
+      [a1, a2] = mem[p+1: p+3]
+      arg1 = a1 if modes[0] else mem[a1]
+      arg2 = a2 if modes[1] else mem[a2]
+      if verbose:
+        print(f'{p:4}: \t {instruction:6} {a1:5} {a2:5}       =>\tJUMP_IF {arg1} to {arg2}')
       if arg1:
-        position = arg2
+        p = arg2
       else:
-        position += 3
-    elif command == 6: # JUMP_NOT_IF if !arg1, position = arg2
-      if (position + 2) >= len(memory):
-        raise Exception('Misisng arguments at position {}'.format(position))
-      arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
-      arg2 = memory[position + 2] if modes[1] else memory[memory[position + 2]]
+        p += 3
+    elif command == 6: # JUMP_NOT_IF if !arg1, p = arg2
+      [a1, a2] = mem[p+1: p+3]
+      arg1 = a1 if modes[0] else mem[a1]
+      arg2 = a2 if modes[1] else mem[a2]
+      if verbose:
+        print(f'{p:4}: \t {instruction:6} {a1:5} {a2:5}       =>\tJUMP_NOT_IF {arg1} to {arg2}')
       if not arg1:
-        position = arg2
+        p = arg2
       else:
-        position += 3
+        p += 3
     elif command == 7: # IF_LESS arg3 = arg1 < arg 2
-      if (position + 3) >= len(memory):
-        raise Exception('Misisng arguments at position {}'.format(position))
-      arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
-      arg2 = memory[position + 2] if modes[1] else memory[memory[position + 2]]
+      [a1, a2, a3] = mem[p+1: p+4]
+      arg1 = a1 if modes[0] else mem[a1]
+      arg2 = a2 if modes[1] else mem[a2]
 
+      if verbose:
+        print(f'{p:4}: \t {instruction:6} {a1:5} {a2:5} {a3:5} =>\tIF_LESS {a3} = {arg1} < {arg2}')
       if arg1 < arg2:
-        memory[memory[position + 3]] = 1
+        mem[a3] = 1
       else:
-        memory[memory[position + 3]] = 0
-      position += 4
+        mem[a3] = 0
+      p += 4
     elif command == 8: # EQUALS arg3 = arg1 == arg 2
-      if (position + 3) >= len(memory):
-        raise Exception('Misisng arguments at position {}'.format(position))
-      arg1 = memory[position + 1] if modes[0] else memory[memory[position + 1]]
-      arg2 = memory[position + 2] if modes[1] else memory[memory[position + 2]]
+      [a1, a2, a3] = mem[p+1: p+4]
+      arg1 = a1 if modes[0] else mem[a1]
+      arg2 = a2 if modes[1] else mem[a2]
 
+      if verbose:
+        print(f'{p:4}: \t {instruction:6} {a1:5} {a2:5} {a3:5} =>\tEQUALS {a3} = {arg1} == {arg2}')
       if arg1 == arg2:
-        memory[memory[position + 3]] = 1
+        mem[a3] = 1
       else:
-        memory[memory[position + 3]] = 0
-      position += 4
+        mem[a3] = 0
+      p += 4
     else:
-      raise Exception('Unknown opCode {} at position {}'.format(memory[position], position))
+      raise Exception('Unknown instruction {} at position {}'.format(instruction, p))
 
   return output_val
 
@@ -131,6 +138,6 @@ assert run([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,
   1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,
   999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99], 9) == 1001
 
-print(run(standary_memory.copy(), 1))
+print(run(standary_memory.copy(), 1, verbose=True))
 
-print(run(standary_memory.copy(), 5))
+print(run(standary_memory.copy(), 5, verbose=True))
