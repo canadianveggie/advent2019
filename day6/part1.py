@@ -12,7 +12,7 @@ def run(filename):
     x = n
     while x != 'COM':
       count += 1
-      x = orbits.get(x)
+      x = orbits[x]
 
   return count
 

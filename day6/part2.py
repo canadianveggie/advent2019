@@ -5,8 +5,6 @@ def run(filename):
       (a, b) = (line.strip().split(')'))
       orbits[b] = a
 
-  nodes = set(orbits.values()).union(orbits.keys())
-
   myOrbits = list()
   x = 'YOU'
   while x != 'COM':
